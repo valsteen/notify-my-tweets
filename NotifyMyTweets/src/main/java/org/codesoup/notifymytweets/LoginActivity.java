@@ -1,17 +1,20 @@
 package org.codesoup.notifymytweets;
 
 import android.app.Activity;
-import android.app.ActionBar;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
+import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public class LoginActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,10 +28,8 @@ public class MainActivity extends Activity {
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -60,6 +61,41 @@ public class MainActivity extends Activity {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             return rootView;
         }
-    }
 
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+
+            if (savedInstanceState == null) {
+                SharedPreferences preferences = getActivity().getSharedPreferences("NotifyMyTweets", MODE_PRIVATE);
+
+                TextView loginEdit = (TextView) getView().findViewById(R.id.loginEdit);
+                TextView passwordEdit = (TextView) getView().findViewById(R.id.passwordEdit);
+
+                CharSequence login = preferences.getString("login", null);
+                CharSequence password = preferences.getString("password", null);
+
+                if (login != null)
+                    loginEdit.setText(login);
+                else
+                    loginEdit.setText("lol");
+
+                if (password != null)
+                    passwordEdit.setText(password);
+            }
+        }
+
+
+        @Override
+        public void onStop() {
+            SharedPreferences preferences = getActivity().getSharedPreferences("NotifyMyTweets", MODE_PRIVATE);
+            TextView loginEdit = (TextView) getView().findViewById(R.id.loginEdit);
+            TextView passwordEdit = (TextView) getView().findViewById(R.id.passwordEdit);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("login", String.valueOf(loginEdit.getText()));
+            editor.putString("password", String.valueOf(passwordEdit.getText()));
+            editor.commit();
+            super.onStop();
+        }
+    }
 }

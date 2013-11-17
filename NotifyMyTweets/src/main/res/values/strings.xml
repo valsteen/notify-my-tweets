@@ -2,7 +2,8 @@
 <resources>
 
     <string name="app_name">NotifyMyTweets</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="login_label">Login</string>
+    <string name="password_label">Password</string>
     <string name="action_settings">Settings</string>
 
 </resources>

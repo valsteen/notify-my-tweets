@@ -9,8 +9,49 @@
     tools:context=".MainActivity$PlaceholderFragment">
 
     <TextView
-        android:text="@string/hello_world"
+        android:text="@string/login_label"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:id="@+id/loginLabel"
+        android:labelFor="@+id/loginEdit" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/loginEdit"
+        android:layout_below="@+id/loginLabel"
+        android:layout_alignParentLeft="true"
+        android:inputType="text|textNoSuggestions|none"
+        android:editable="true"
+        android:enabled="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_alignRight="@+id/passwordEdit" />
+
+    <TextView
+        android:text="@string/password_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/passwordLabel"
+        android:labelFor="@id/passwordEdit"
+        android:layout_below="@+id/loginEdit"
+        android:layout_alignParentLeft="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/passwordEdit"
+        android:layout_below="@+id/passwordLabel"
+        android:layout_alignParentLeft="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:id="@+id/save"
+        android:layout_below="@+id/passwordEdit"
+        android:layout_alignParentLeft="true" />
 
 </RelativeLayout>
