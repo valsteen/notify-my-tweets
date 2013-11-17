@@ -23,5 +23,6 @@ android {
 }
 
 dependencies {
-    compile files('../libraries/guava-13.0.1.jar', '../libraries/hbc-core.jar')
+    compile files('../libraries/android-support-v4.jar')
+    compile files('../libraries/twitter4j-stream.jar')
 }

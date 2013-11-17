@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="hbc-twitter4j">
+  <library name="android-support-v4">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/libraries/hbc-twitter4j.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libraries/android-support-v4.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

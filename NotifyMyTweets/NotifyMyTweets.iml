@@ -69,8 +69,8 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
-    <orderEntry type="library" exported="" name="hbc-core" level="project" />
-    <orderEntry type="library" exported="" name="guava-13.0.1" level="project" />
+    <orderEntry type="library" exported="" name="android-support-v4" level="project" />
+    <orderEntry type="library" exported="" name="twitter4j-stream" level="project" />
   </component>
 </module>
 
