@@ -8,6 +8,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="commons-codec-1.6" level="project" />
+    <orderEntry type="library" name="hbc-core" level="project" />
   </component>
 </module>
 

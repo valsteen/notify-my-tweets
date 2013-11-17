@@ -23,4 +23,5 @@ android {
 }
 
 dependencies {
+    compile files('../libraries/guava-13.0.1.jar', '../libraries/hbc-core.jar')
 }
