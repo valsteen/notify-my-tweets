@@ -61,6 +61,7 @@ public class NotifierService extends Service implements NewTweetListener {
                         .setSmallIcon(R.drawable.ic_launcher)
                         .setContentTitle(String.format("New tweet from %s", user.getScreenName()))
                         .setLights(0xFFFF0000, 500, 500)
+                        .setVibrate(new long[] {0, 100, 100, 100, 100, 100, 300, 100, 100, 100, 100, 100, 100})
                         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                         .setAutoCancel(true);
 
