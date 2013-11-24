@@ -20,11 +20,6 @@ public class NotifierService extends Service implements NewTweetListener {
     private static final String TAG = "NotifierService";
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-    }
-
-    @Override
     public IBinder onBind(Intent intent) {
         return binder;
     }
