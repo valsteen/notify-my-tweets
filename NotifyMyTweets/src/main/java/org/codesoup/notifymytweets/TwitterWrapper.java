@@ -8,6 +8,7 @@ import android.util.Log;
 
 import java.io.Serializable;
 
+import twitter4j.ConnectionLifeCycleListener;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -16,15 +17,12 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
-import twitter4j.UserStream;
 import twitter4j.UserStreamAdapter;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.Authorization;
 import twitter4j.auth.NullAuthorization;
 import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
-
-import static android.os.SystemClock.sleep;
 
 class TwitterWrapper implements Serializable, Handler.Callback, TwitterAuthentication, TwitterClient {
     private static final String TAG = "TwitterWrapper";
@@ -45,6 +43,7 @@ class TwitterWrapper implements Serializable, Handler.Callback, TwitterAuthentic
 
     private final int GET_LAST_TWEET = 0;
     private final int START_STREAM = 1;
+    private transient boolean mListenerConnected = false;
 
     public TwitterWrapper(String consumerKey, String consumerSecret) {
         mConsumerKey = consumerKey;
@@ -181,14 +180,37 @@ class TwitterWrapper implements Serializable, Handler.Callback, TwitterAuthentic
                 handleGetLastTweet();
                 return true;
             case START_STREAM:
-                handleGetLastTweet(); // always start by getting last tweet, as we won't get old messages
-                getTwitterStream().addListener(new UserStreamAdapter() {
-                    @Override
-                    public void onStatus(Status status) {
-                        onTweet(status);
-                    }
-                });
-                getTwitterStream().user();
+                if (!mListenerConnected) {
+                    getTwitterStream().addListener(new UserStreamAdapter() {
+                        @Override
+                        public void onStatus(Status status) {
+                            onTweet(status);
+                        }
+
+                        @Override
+                        public void onException(Exception ex) {
+                            Log.e(TAG, "disconnected", ex);
+                        }
+                    });
+                    mListenerConnected = true;
+                    getTwitterStream().addConnectionLifeCycleListener(new ConnectionLifeCycleListener() {
+                        @Override
+                        public void onConnect() {
+                            handleGetLastTweet(); // in case some message was missed
+                        }
+
+                        @Override
+                        public void onDisconnect() {
+                            Log.e(TAG, "onDisconnect");
+                        }
+
+                        @Override
+                        public void onCleanUp() {
+
+                        }
+                    });
+                    getTwitterStream().user();
+                }
                 return true;
         }
         return false;
