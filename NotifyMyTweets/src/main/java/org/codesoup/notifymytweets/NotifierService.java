@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
@@ -59,7 +60,8 @@ public class NotifierService extends Service implements NewTweetListener {
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_launcher)
                         .setContentTitle(String.format("New tweet from %s", user.getScreenName()))
-                                //.setContentText("Hello World!")
+                        .setLights(0xFFFF0000, 500, 500)
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                         .setAutoCancel(true);
 
         // Creates an explicit intent for an Activity in your app
