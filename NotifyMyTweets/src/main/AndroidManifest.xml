@@ -22,12 +22,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="notifymytweets" android:host="oauth"/>
-            </intent-filter>
         </activity>
         <service android:name=".NotifierService" android:enabled="true" android:permission="org.codesoup.NOTIFIER_SERVICE_PERMISSION"/>
     </application>

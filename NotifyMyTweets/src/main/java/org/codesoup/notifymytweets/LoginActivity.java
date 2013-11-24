@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,18 +21,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import twitter4j.TwitterException;
-import twitter4j.auth.Authorization;
 
 import static org.codesoup.notifymytweets.Secrets.CONSUMER_KEY;
 import static org.codesoup.notifymytweets.Secrets.CONSUMER_SECRET;
@@ -53,6 +52,8 @@ public class LoginActivity extends Activity implements Handler.Callback {
     public static final int SHOW_TOAST = 1;
     public static final int OAUTH_REQUEST = 2;
     public static final int OAUTH_ACCESS = 3;
+    public static final int START_WEBVIEW = 4;
+
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
             case SHOW_TOAST:
@@ -66,6 +67,9 @@ public class LoginActivity extends Activity implements Handler.Callback {
                 if (!mTwitter.isAuthorized()) {
                     OAuthRequest();
                 }
+                return true;
+            case START_WEBVIEW:
+                startWebView(String.valueOf(msg.obj));
                 return true;
         }
         return false;
@@ -181,9 +185,33 @@ public class LoginActivity extends Activity implements Handler.Callback {
         Message.obtain(mainHandler, SHOW_TOAST, message).sendToTarget();
     }
 
+    public void startWebView(String url) {
+        WebView webview = new WebView(this);
+        webview.setWebViewClient(new WebViewClient() {
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                Uri uri = Uri.parse(url);
+                if (uri.getScheme().equals("notifymytweets") && uri.getHost().equals("oauth")) {
+                    String denied = uri.getQueryParameter("denied");
+                    String oauth_token = uri.getQueryParameter("oauth_token");
+                    final String oauth_verifier = uri.getQueryParameter("oauth_verifier");
+                    if (denied != null) {
+                        asyncToast("You denied app authorization");
+                    } else if (oauth_token != null && oauth_verifier != null) {
+                        Message.obtain(threadHandler, OAUTH_ACCESS, oauth_verifier).sendToTarget();
+                    } else {
+                        asyncToast("Wrong callback parameters");
+                    }
+                    setContentView(R.layout.activity_main);
+                }
+            }
+        });
+
+        setContentView(webview);
+        webview.loadUrl(url);
+    }
     public void OAuthRequest() {
         try {
-            startActivity(new Intent(Intent.ACTION_VIEW, mTwitter.getAuthorizationUrl()));
+            Message.obtain(mainHandler, START_WEBVIEW, mTwitter.getAuthorizationUrl()).sendToTarget();
         } catch (TwitterException ex) {
             asyncToast("Could not login to twitter");
             Log.e(TAG, "Could not login to twitter", ex);
@@ -199,26 +227,6 @@ public class LoginActivity extends Activity implements Handler.Callback {
         } catch (TwitterException ex) {
             asyncToast("Invalid authorization request token");
             Log.e(TAG, "Invalid authorization request token", ex);
-        }
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Uri uri = intent.getData();
-        if (uri != null && uri.getScheme() != null && uri.getHost() != null) {
-            if (uri.getScheme().equals("notifymytweets") && uri.getHost().equals("oauth")) {
-                String denied = uri.getQueryParameter("denied");
-                String oauth_token = uri.getQueryParameter("oauth_token");
-                final String oauth_verifier = uri.getQueryParameter("oauth_verifier");
-                if (denied != null) {
-                    asyncToast("You denied app authorization");
-                } else if (oauth_token != null && oauth_verifier != null) {
-                    Message.obtain(threadHandler, OAUTH_ACCESS, oauth_verifier).sendToTarget();
-                } else {
-                    asyncToast("Wrong callback parameters");
-                }
-            }
         }
     }
 
